@@ -1,6 +1,6 @@
-# The Jaffle Shop For GaussDB and DWS
+# The Jaffle Shop For GaussDB
 
-这个DEMO项目将展示如何使用dbt-core和dbt-gaussdbdws插件来开发一个数据仓库项目。支持华为GaussDB和DWS。
+这个DEMO项目将展示如何使用dbt-core和dbt-gaussdbdws插件来开发一个数据仓库项目。支持华为GaussDB。
 
 
 ##  前提条件
@@ -59,7 +59,7 @@ jaffle_shop:
       password: Dbtuser@123
       port: 8000
       dbname: dbt_test
-      schema: jaffle-shop
+      schema: jaffle_shop
       threads: 4
 
 ```
@@ -74,7 +74,7 @@ DEMO中已经配置好了，如果不一致，请参考上面修改。
 
 参数`gaussdb_type` ,默认为0，主要区分是否有系统表`pg_matviews`,如果存在，设置为1。一般内核9.x的默认是没有这个系统表，需要设置为0。
 
-### 测试连接
+## 测试连接
 使用下面的命令测试连接
 ```bash
 dbt debug
@@ -92,7 +92,7 @@ dbt debug
 03:28:45    port: 8000
 03:28:45    user: dbt_user
 03:28:45    database: dbt_test
-03:28:45    schema: jaffle-shop
+03:28:45    schema: jaffle_shop
 03:28:45    connect_timeout: 10
 03:28:45    role: None
 03:28:45    search_path: None
@@ -116,8 +116,8 @@ connection to server at "xx.xx.xx.xx", port 8000 failed: none of the server's SA
 ```
 原因是原生的psycopg2不支持SHA256的加密方式，只支持MD5。
 下面提供两个途径实现修改：
-- 联系GaussDB技术支持，修改参数`password_encryption_type`为1。
-- 参考下面的方法，使用GaussDB提供的psycopg2替换原生psycopg2。
+- 方法一：联系GaussDB技术支持，修改参数`password_encryption_type`为1。
+- 方法二：参考下面的方法，使用GaussDB提供的psycopg2替换原生psycopg2。
   ```bash
     # 华为云官网获取驱动包
     wget -O /tmp/GaussDB_driver.zip https://dbs-download.obs.cn-north-1.myhuaweicloud.com/GaussDB/1730887196055/GaussDB_driver.zip
@@ -160,19 +160,141 @@ connection to server at "xx.xx.xx.xx", port 8000 failed: none of the server's SA
   ```
 
 
-### 加载数据
+## 加载数据
 
+使用下面的命令加载数据，数据文件位于`seeds/`目录下：
+- raw_customers.csv
+- raw_items.csv
+- raw_supplies.csv
+- raw_stores.csv
+- raw_products.csv
+- raw_orders.csv
 
-```yaml dbt_project.yml
-seed-paths: ["seeds", "jaffle-data"]
-```
-
+会在GaussDB的数据库dbt_test.jaffle_shop中创建表raw开头的6张表，并加载数据：
 ```bash
 dbt seed
 ```
 
-## 启动项目
+数据导入成功会得到如下输出：
+```bash
+03:38:30  1 of 6 START seed file jaffle_shop.raw_customers ............................... [RUN]
+03:38:30  2 of 6 START seed file jaffle_shop.raw_items ................................... [RUN]
+03:38:30  3 of 6 START seed file jaffle_shop.raw_orders .................................. [RUN]
+03:38:30  4 of 6 START seed file jaffle_shop.raw_products ................................ [RUN]
+03:38:33  4 of 6 OK loaded seed file jaffle_shop.raw_products ............................ [INSERT 10 in 2.28s]
+03:38:33  5 of 6 START seed file jaffle_shop.raw_stores .................................. [RUN]
+03:38:34  1 of 6 OK loaded seed file jaffle_shop.raw_customers ........................... [INSERT 935 in 3.37s]
+03:38:34  6 of 6 START seed file jaffle_shop.raw_supplies ................................ [RUN]
+03:38:35  5 of 6 OK loaded seed file jaffle_shop.raw_stores .............................. [INSERT 6 in 1.93s]
+03:38:36  6 of 6 OK loaded seed file jaffle_shop.raw_supplies ............................ [INSERT 65 in 1.87s]
+03:40:25  2 of 6 OK loaded seed file jaffle_shop.raw_items ............................... [INSERT 90900 in 114.72s]
+03:41:00  3 of 6 OK loaded seed file jaffle_shop.raw_orders .............................. [INSERT 61948 in 149.65s]
+03:41:00
+03:41:00  Finished running 6 seeds in 0 hours 2 minutes and 31.90 seconds (151.90s).
+03:41:00
+03:41:00  Completed successfully
+03:41:00
+03:41:00  Done. PASS=6 WARN=0 ERROR=0 SKIP=0 TOTAL=6
+```
 
-执行 `dbt build` 来运行项目
+在GaussDB中查看数据：
+```sql
+ANALYZE jaffle_shop.raw_customers;
+ANALYZE jaffle_shop.raw_items;
+ANALYZE jaffle_shop.raw_orders;
+ANALYZE jaffle_shop.raw_products;
+ANALYZE jaffle_shop.raw_stores;
+ANALYZE jaffle_shop.raw_supplies;
 
-### 检查数据
+SELECT
+    relname AS table_name,
+    reltuples::BIGINT AS table_row_count
+FROM
+    pg_class c
+JOIN
+    pg_namespace n ON c.relnamespace = n.oid
+WHERE
+    n.nspname = 'jaffle_shop'
+    AND c.relkind = 'r'  -- 只查询普通表
+ORDER BY
+    table_name;
+
+```
+
+输出结果：
+| #   | table_name    | table_row_count |
+|-----|---------------|-----------------|
+| 1   | raw_customers | 935             |
+| 2   | raw_items     | 90,900          |
+| 3   | raw_orders    | 61,948          |
+| 4   | raw_products  | 10              |
+| 5   | raw_stores    | 6               |
+| 6   | raw_supplies  | 65              |
+
+
+## 运行项目
+
+执行 `dbt run` 来运行项目,将raw开头的表经过数据清洗转换后加载到stg开头的表。
+```bash
+# 运行项目
+dbt run
+
+# 或者可以开启Debug模式，在运行过程中打印生成的每个 SQL 查询语句
+dbt run -d --print
+```
+运行成功会得到如下输出：
+```bash
+... ...
+03:54:30  Connection 'master' was properly closed.
+03:54:30  Connection 'model.jaffle_shop.stg_supplies' was properly closed.
+03:54:30  Connection 'model.jaffle_shop.stg_products' was properly closed.
+03:54:30  Connection 'model.jaffle_shop.stg_order_items' was properly closed.
+03:54:30  Connection 'model.jaffle_shop.stg_orders' was properly closed.
+03:54:30
+03:54:30  Finished running 6 table models in 0 hours 0 minutes and 4.02 seconds (4.02s).
+03:54:30  Command end result
+03:54:30
+03:54:30  Completed successfully
+03:54:30
+03:54:30  Done. PASS=6 WARN=0 ERROR=0 SKIP=0 TOTAL=6
+03:54:30  Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 5.962977, "process_in_blocks": "0", "process_kernel_time": 0.210429, "process_mem_max_rss": "111980", "process_out_blocks": "3344", "process_user_time": 5.56017}
+03:54:30  Command `dbt run` succeeded at 11:54:30.798747 after 5.96 seconds
+03:54:30  Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffb9f0ed90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffb9b69dc0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffb89f9910>]}
+03:54:30  Flushing usage events
+03:54:31  Sending 1 of 2
+```
+
+在GaussDB中查看数据：
+```sql
+ANALYZE jaffle_shop.stg_customers;
+ANALYZE jaffle_shop.stg_order_items;
+ANALYZE jaffle_shop.stg_orders;
+ANALYZE jaffle_shop.stg_products;
+ANALYZE jaffle_shop.stg_locations;
+ANALYZE jaffle_shop.stg_supplies;
+
+SELECT
+    relname AS table_name,
+    reltuples::BIGINT AS table_row_count
+FROM
+    pg_class c
+JOIN
+    pg_namespace n ON c.relnamespace = n.oid
+WHERE
+    n.nspname = 'jaffle_shop'
+    AND c.relkind = 'r'  -- 只查询普通表
+    AND c.relname like 'stg%' -- 只查询stg开头的表
+ORDER BY
+    table_name;
+```
+
+
+输出结果：
+| #   | table_name       | table_row_count |
+|-----|------------------|-----------------|
+| 1   | stg_customers    | 935             |
+| 2   | stg_locations    | 6               |
+| 3   | stg_order_items  | 90,900          |
+| 4   | stg_orders       | 61,948          |
+| 5   | stg_products     | 10              |
+| 6   | stg_supplies     | 65              |
