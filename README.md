@@ -88,7 +88,7 @@ dbt debug
 03:28:45   - git [OK found]
 
 03:28:45  Connection:
-03:28:45    host: 123.249.121.53
+03:28:45    host: 123.xx.xx.53
 03:28:45    port: 8000
 03:28:45    user: dbt_user
 03:28:45    database: dbt_test

@@ -1,0 +1,11 @@
+target/
+logs/
+dbt_packages
+.git/
+.venv
+
+
+.user.yml
+gitpush.sh
+profiles.yml
+Dockerfile
