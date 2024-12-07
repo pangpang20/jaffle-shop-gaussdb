@@ -1,15 +1,15 @@
-transform: 
+transform:
   source: # GaussDB
-    host:  
-    user:  
-    password:  
-    port:  
-    dbname:  
-    schema:  
+    host:
+    user:
+    password:
+    port:
+    dbname:
+    schema:
   target: # DWS
-    host:  
-    user:  
-    password:  
-    port:  
-    dbname:  
-    schema:  
+    host:
+    user:
+    password:
+    port:
+    dbname:
+    schema:
