@@ -1,6 +1,15 @@
 FROM --platform=linux/arm64 ubuntu:22.04
 
 WORKDIR /dbt_app
+
+ENV DB_HOST=localhost \
+    DB_PORT=8000 \
+    DB_USER=dbt_user \
+    DB_PASS=Dbtuser@123 \
+    DB_NAME=dbt_test \
+    DB_SCHEMA=jaffle_shop
+
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     ca-certificates \
@@ -22,6 +31,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-distutils \
+    python3-venv \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN wget -O /tmp/GaussDB_driver.zip https://dbs-download.obs.cn-north-1.myhuaweicloud.com/GaussDB/1730887196055/GaussDB_driver.zip && \
@@ -30,6 +40,7 @@ RUN wget -O /tmp/GaussDB_driver.zip https://dbs-download.obs.cn-north-1.myhuawei
     \cp /tmp/GaussDB_driver/Centralized/Hce2_arm_64/GaussDB-Kernel_505.2.0_Hce_64bit_Python.tar.gz /tmp/ && \
     tar -zxvf /tmp/GaussDB-Kernel_505.2.0_Hce_64bit_Python.tar.gz -C /tmp/ && \
     rm -rf /tmp/GaussDB-Kernel_505.2.0_Hce_64bit_Python.tar.gz && \
+    rm -rf /tmp/GaussDB_driver && \
     \cp /tmp/psycopg2 $(python3 -c 'import site; print(site.getsitepackages()[0])') -r && \
     chmod 755 $(python3 -c 'import site; print(site.getsitepackages()[0])')/psycopg2 -R
 ENV PYTHONPATH="${PYTHONPATH}:$(python3 -c 'import site; print(site.getsitepackages()[0])')"
@@ -37,11 +48,15 @@ ENV LD_LIBRARY_PATH="/tmp/lib:$LD_LIBRARY_PATH"
 
 COPY requirements.txt /dbt_app/
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    python3 -m pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    python3 -m pip install --upgrade pip
 
 
 COPY . /dbt_app/
 RUN ln -s /usr/bin/python3 /usr/bin/python && \
+    chmod +x /dbt_app/entrypoint.sh && \
+    python3 -m pip install -r requirements.txt && \
+    python3 -m pip install dbt-core dbt-gaussdbdws
+
+ENTRYPOINT ["/dbt_app/entrypoint.sh"]
 
 CMD ["bash"]

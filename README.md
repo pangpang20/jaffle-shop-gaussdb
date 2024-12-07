@@ -321,9 +321,9 @@ ORDER BY
 ## 基于Docker运行项目
 ### 前提条件
 
-- 1. docker已经安装
-- 2. 具备docker命令使用能力
-- 3. 克隆项目到本地（基于ARM架构）
+- docker已经安装
+- 具备docker命令使用能力
+- 克隆项目到本地（基于ARM架构），如果是x86架构，请修改Dockerfile中的FROM指令
 
 ```bash
 # 构建镜像
@@ -334,5 +334,27 @@ docker images
 
 # 运行镜像，并进入容器
 docker run -it --name jaffle-shop-gaussdb  jaffle-shop-gaussdb:1.0.0
+
+```
+
+### 安装插件
+
+在容器中执行如下命令安装插件：
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+
+```
+
+
+如果安装报错提示http2协议错误，请使用以下命令：
+```bash
+git config --global http.version HTTP/1.1
+```
+
+查看版本信息
+```bash
+dbt --version
+pip show dbt-core dbt-gaussdbdws
 
 ```
