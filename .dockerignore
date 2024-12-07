@@ -3,9 +3,12 @@ logs/
 dbt_packages
 .git/
 .venv
+source_data/
 
 
 .user.yml
 gitpush.sh
 profiles.yml
 Dockerfile
+trans_settings.yml
+dws_create_stg_tables.sql
