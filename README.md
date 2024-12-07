@@ -298,3 +298,14 @@ ORDER BY
 | 4   | stg_orders       | 61,948          |
 | 5   | stg_products     | 10              |
 | 6   | stg_supplies     | 65              |
+
+（可选步骤）导出数据到csv文件：
+```sql
+-- 通过GaussDB客户端gsql登录，使用\copy命令导出数据到csv文件
+\copy (select * from jaffle_shop.stg_customers) to '/tmp/stg_customers.csv' csv delimiter ',' quote '"';
+\copy (select * from jaffle_shop.stg_locations) to '/tmp/stg_locations.csv' csv delimiter ',' quote '"';
+\copy (select * from jaffle_shop.stg_order_items) to '/tmp/stg_order_items.csv' csv delimiter ',' quote '"';
+\copy (select * from jaffle_shop.stg_orders) to '/tmp/stg_orders.csv' csv delimiter ',' quote '"';
+\copy (select * from jaffle_shop.stg_products) to '/tmp/stg_products.csv' csv delimiter ',' quote '"';
+\copy (select * from jaffle_shop.stg_supplies) to '/tmp/stg_supplies.csv' csv delimiter ',' quote '"';
+```
