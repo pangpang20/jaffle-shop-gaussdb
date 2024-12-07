@@ -6,9 +6,12 @@ env
 target/
 dbt_packages/
 logs/
+source_data/
 profiles.yml
 Taskfile.yml
 gitpush.sh
+trans_settings.yml
+dws_create_stg_tables.sql
 
 .DS_Store
 
