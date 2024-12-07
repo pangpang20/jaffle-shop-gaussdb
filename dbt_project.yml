@@ -23,7 +23,7 @@ clean-targets:
 
 vars:
   "dbt_date:time_zone": "America/Los_Angeles"
-  "gaussdb_type": 0 
+  "gaussdb_type": 0
 
 seeds:
   jaffle_shop:

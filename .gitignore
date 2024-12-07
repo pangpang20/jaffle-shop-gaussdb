@@ -8,6 +8,7 @@ dbt_packages/
 logs/
 profiles.yml
 Taskfile.yml
+gitpush.sh
 
 .DS_Store
 

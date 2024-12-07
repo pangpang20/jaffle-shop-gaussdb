@@ -1,6 +1,6 @@
 jaffle_shop:
   target: dev_gaussdb
-  outputs: 
+  outputs:
     dev_gaussdb: # 华为GaussDB
       type: gaussdbdws # 类型gaussdbdws
       host: 数据库IP地址
@@ -9,4 +9,4 @@ jaffle_shop:
       port: 8000  # 默认端口
       dbname: 数据库名称
       schema: Schema名称
-      threads: 1   
+      threads: 1
