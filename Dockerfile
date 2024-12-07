@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     iputils-ping \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-    
+
 COPY . /dbt_app/
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     python3 -m pip install --upgrade pip
@@ -47,13 +47,13 @@ RUN ln -s /usr/bin/python3 /usr/bin/python && \
     python3 -m venv /dbt_app/.venv
 
 ENV PATH="/dbt_app/.venv/bin:$PATH"
-    
+
 RUN chmod +x /dbt_app/entrypoint.sh && \
     /dbt_app/.venv/bin/python3 -m pip install -r /dbt_app/requirements.txt && \
     /dbt_app/.venv/bin/python3 -m pip install dbt-core dbt-gaussdbdws && \
     dbt deps
 
-    
+
 RUN wget -O /tmp/GaussDB_driver.zip https://dbs-download.obs.cn-north-1.myhuaweicloud.com/GaussDB/1730887196055/GaussDB_driver.zip && \
     unzip /tmp/GaussDB_driver.zip -d /tmp/ && \
     rm -rf /tmp/GaussDB_driver.zip && \

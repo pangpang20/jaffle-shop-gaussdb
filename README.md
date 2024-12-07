@@ -406,11 +406,11 @@ dbt seed
 11:04:32  5 of 6 OK loaded seed file jaffle_shop.raw_stores .............................. [INSERT 6 in 0.47s]
 11:04:32  6 of 6 START seed file jaffle_shop.raw_supplies ................................ [RUN]
 11:04:33  6 of 6 OK loaded seed file jaffle_shop.raw_supplies ............................ [INSERT 65 in 0.55s]
-11:04:33  
+11:04:33
 11:04:33  Finished running 6 seeds in 0 hours 1 minutes and 58.26 seconds (118.26s).
-11:04:33  
+11:04:33
 11:04:33  Completed successfully
-11:04:33  
+11:04:33
 11:04:33  Done. PASS=6 WARN=0 ERROR=0 SKIP=0 TOTAL=6
 ```
 
@@ -475,11 +475,11 @@ dbt run -d --print
 11:05:49  5 of 6 OK created sql table model jaffle_shop.stg_products ..................... [INSERT 0 10 in 0.54s]
 11:05:49  6 of 6 START sql table model jaffle_shop.stg_supplies .......................... [RUN]
 11:05:49  6 of 6 OK created sql table model jaffle_shop.stg_supplies ..................... [INSERT 0 65 in 0.54s]
-11:05:50  
+11:05:50
 11:05:50  Finished running 6 table models in 0 hours 0 minutes and 5.83 seconds (5.83s).
-11:05:50  
+11:05:50
 11:05:50  Completed successfully
-11:05:50  
+11:05:50
 11:05:50  Done. PASS=6 WARN=0 ERROR=0 SKIP=0 TOTAL=6
 
 # 退出容器
@@ -521,4 +521,3 @@ ORDER BY
 | 4   | stg_orders       | 61,948          |
 | 5   | stg_products     | 10              |
 | 6   | stg_supplies     | 65              |
-
