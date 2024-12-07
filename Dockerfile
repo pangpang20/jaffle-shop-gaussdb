@@ -40,6 +40,8 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && 
     python3 -m pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
- 
+
 COPY . /dbt_app/
+RUN ln -s /usr/bin/python3 /usr/bin/python && \
+
 CMD ["bash"]

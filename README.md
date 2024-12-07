@@ -9,8 +9,15 @@
 - 具备linux基本操作能力。
 - 具备dbt-core的基本使用能力。
 
-## 安装插件
-克隆项目到本地
+## 部署项目
+提供两种方式部署项目：
+
+- 克隆项目到本地，然后安装插件使用
+- 使用docker部署，在容器中运行项目
+
+
+## 克隆项目到本地运行项目
+### 安装插件
 在项目根目录下执行以下命令安装插件
 ```bash
 python3 -m venv .venv
@@ -30,13 +37,13 @@ pip show dbt-core dbt-gaussdbdws
 
 ```
 
-更新插件
+更新插件（可选）
 ```bash
 pip install --upgrade dbt-gaussdbdws
 ```
 
-## 配置项目
-### 创建数据库和用户
+### 配置项目
+#### 创建数据库和用户
 GaussDB中创建用户和数据库，参考SQL：
 ```sql
 CREATE USER dbt_user WITH PASSWORD 'Dbtuser@123';
@@ -45,7 +52,7 @@ CREATE DATABASE dbt_test OWNER = "dbt_user" TEMPLATE = "template0" ENCODING = 'U
 ```
 
 
-### 修改profiles.yml
+#### 修改profiles.yml
 ```bash
 cp sample-profiles.yml profiles.yml
 vi profiles.yml
@@ -64,7 +71,7 @@ jaffle_shop:
 
 ```
 
-### 修改dbt_project.yml
+#### 修改dbt_project.yml
 修改dbt_project.yml中的profile，schema为 profiles.yml中的值：
 ```bash
 profile: jaffle_shop
@@ -74,7 +81,7 @@ DEMO中已经配置好了，如果不一致，请参考上面修改。
 
 参数`gaussdb_type` ,默认为0，主要区分是否有系统表`pg_matviews`,如果存在，设置为1。一般内核9.x的默认是没有这个系统表，需要设置为0。
 
-## 测试连接
+### 测试连接
 使用下面的命令测试连接
 ```bash
 dbt debug
@@ -160,7 +167,7 @@ connection to server at "xx.xx.xx.xx", port 8000 failed: none of the server's SA
   ```
 
 
-## 加载数据
+### 加载数据
 
 使用下面的命令加载数据，数据文件位于`seeds/`目录下：
 - raw_customers.csv
@@ -232,7 +239,7 @@ ORDER BY
 | 6   | raw_supplies  | 65              |
 
 
-## 运行项目
+### 运行项目
 
 执行 `dbt run` 来运行项目,将raw开头的表经过数据清洗转换后加载到stg开头的表。
 ```bash
@@ -308,4 +315,24 @@ ORDER BY
 \copy (select * from jaffle_shop.stg_orders) to '/tmp/stg_orders.csv' csv delimiter ',' quote '"';
 \copy (select * from jaffle_shop.stg_products) to '/tmp/stg_products.csv' csv delimiter ',' quote '"';
 \copy (select * from jaffle_shop.stg_supplies) to '/tmp/stg_supplies.csv' csv delimiter ',' quote '"';
+```
+
+
+## 基于Docker运行项目
+### 前提条件
+
+- 1. docker已经安装
+- 2. 具备docker命令使用能力
+- 3. 克隆项目到本地（基于ARM架构）
+
+```bash
+# 构建镜像
+docker build -t jaffle-shop-gaussdb:1.0.0  .
+
+# 查看镜像
+docker images
+
+# 运行镜像，并进入容器
+docker run -it --name jaffle-shop-gaussdb  jaffle-shop-gaussdb:1.0.0
+
 ```
