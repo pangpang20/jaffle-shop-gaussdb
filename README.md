@@ -18,6 +18,12 @@
 
 ## 克隆项目到本地运行项目
 ### 安装插件
+```bash
+# 克隆项目
+git clone git@github.com:pangpang20/jaffle-shop-gaussdb.git
+cd jaffle-shop-gaussdb
+```
+
 在项目根目录下执行以下命令安装插件
 ```bash
 python3 -m venv .venv
@@ -321,8 +327,9 @@ ORDER BY
 ## 基于Docker运行项目
 ### 前提条件
 
-- docker已经安装
+- docker,git已经安装
 - 具备docker命令使用能力
+- 已经添加 SSH 密钥到 GitHub
 - 克隆项目到本地（基于ARM架构），如果是x86架构，请修改Dockerfile中的FROM指令
 
 ```bash
