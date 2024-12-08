@@ -360,7 +360,8 @@ docker build -t jaffle-shop-gaussdb:1.0.0  .
 docker images
 
 # 运行镜像，并进入容器(修改参数为实际的值)
-docker run -it -e DB_HOST=xx.xx.xx.xx -e DB_USER=xxx -e DB_PASS=xxxx -e DB_NAME=xxxx --name jaffle-shop-gaussdb  jaffle-shop-gaussdb:1.0.0
+docker run -it -e DB_HOST=xx.xx.xx.xx -e DB_PORT=xxx -e DB_USER=xxx -e DB_PASS=xxxx -e DB_NAME=xxxx -e DB_SCHEMA=xx --name jaffle-shop-gaussdb  jaffle-shop-gaussdb:1.0.0
+
 
 # 如果是不带参数运行，则进入容器后需要修改profiles.yml
 docker run -it --name jaffle-shop-gaussdb  jaffle-shop-gaussdb:1.0.0
