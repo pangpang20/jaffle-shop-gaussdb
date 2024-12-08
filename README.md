@@ -18,6 +18,10 @@
 
 ## 克隆项目到本地运行项目
 ### 安装插件
+
+git的安装和github配置请参考[基于EulerOS配置GitHub](https://bbs.huaweicloud.com/blogs/441850)
+
+
 在自己的工作目录克隆项目，比如: /opt
 ```bash
 # 克隆项目
@@ -348,6 +352,8 @@ ORDER BY
 - 具备docker命令使用能力
 - 已经添加 SSH 密钥到 GitHub
 - 克隆项目到本地（基于ARM架构），如果是x86架构，请修改Dockerfile中的FROM指令
+
+docker安装请参考[基于EulerOS部署Docker](https://bbs.huaweicloud.com/blogs/441849)
 
 ```bash
 # 克隆项目
