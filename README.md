@@ -18,6 +18,7 @@
 
 ## 克隆项目到本地运行项目
 ### 安装插件
+在自己的工作目录克隆项目，比如: /opt
 ```bash
 # 克隆项目
 git clone git@github.com:pangpang20/jaffle-shop-gaussdb.git
@@ -49,7 +50,7 @@ pip install --upgrade dbt-gaussdbdws
 ```
 
 ### 配置项目
-#### 创建数据库和用户
+#### 创建数据库和用户（可选）
 GaussDB中创建用户和数据库，参考SQL：
 ```sql
 CREATE USER dbt_user WITH PASSWORD 'Dbtuser@123';
@@ -72,12 +73,12 @@ jaffle_shop:
       password: Dbtuser@123
       port: 8000
       dbname: dbt_test
-      schema: jaffle_shop
+      schema: jaffle_shop  # 如果这里有修改，下一步的dbt_project.yml也要同步修改
       threads: 4
 
 ```
 
-#### 修改dbt_project.yml
+#### 修改dbt_project.yml（可选）
 修改dbt_project.yml中的profile，schema为 profiles.yml中的值：
 ```bash
 profile: jaffle_shop
