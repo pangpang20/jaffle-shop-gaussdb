@@ -326,6 +326,9 @@ ORDER BY
 - 克隆项目到本地（基于ARM架构），如果是x86架构，请修改Dockerfile中的FROM指令
 
 ```bash
+# 克隆项目
+git clone git@github.com:pangpang20/jaffle-shop-gaussdb.git
+
 # 构建镜像
 docker build -t jaffle-shop-gaussdb:1.0.0  .
 
