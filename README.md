@@ -189,6 +189,22 @@ connection to server at "xx.xx.xx.xx", port 8000 failed: none of the server's SA
 dbt seed
 ```
 
+如果出现下面的错误：
+```bash
+/opt/jaffle-shop-gaussdb/.venv/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+03:53:24  Running with dbt=1.8.9
+03:53:24  Registered adapter: gaussdbdws=1.0.1
+03:53:24  Encountered an error:
+Compilation Error
+  dbt found 3 package(s) specified in packages.yml, but only 0 package(s) installed in dbt_packages. Run "dbt deps" to install package dependencies.
+```
+请参考提示执行：
+```bash
+git config --global http.version HTTP/1.1
+dbt deps
+```
+
 数据导入成功会得到如下输出：
 ```bash
 03:38:30  1 of 6 START seed file jaffle_shop.raw_customers ............................... [RUN]
