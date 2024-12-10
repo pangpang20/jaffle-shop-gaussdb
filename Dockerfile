@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     git \
     net-tools \
     iputils-ping \
+    vim \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY . /dbt_app/
@@ -68,6 +69,4 @@ RUN wget -O /tmp/GaussDB_driver.zip https://dbs-download.obs.cn-north-1.myhuawei
 ENV PYTHONPATH="${PYTHONPATH}:$(/dbt_app/.venv/bin/python3 -c 'import site; print(site.getsitepackages()[0])')"
 ENV LD_LIBRARY_PATH="/tmp/lib:$LD_LIBRARY_PATH"
 
-ENTRYPOINT ["/dbt_app/entrypoint.sh"]
-
-CMD ["bash"]
+ENTRYPOINT ["/bin/bash","-c" ,"/dbt_app/entrypoint.sh"]
